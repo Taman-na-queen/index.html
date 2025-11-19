@@ -17,4 +17,260 @@
       color: white;
       padding: 30px;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-size: 20px;
+      transition: 0.2s;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      background: #f0f8ff;
+    }
+
+    #subjectPage, #worksheetPage {
+      display: none;
+    }
+
+    .backBtn {
+      background: #4a90e2;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .worksheet-question {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .quiz-question {
+      margin: 15px 0;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Year 6 SATs Study Hub</h1>
+    <p>Select your subject to begin learning</p>
+  </header>
+
+  <div class="container">
+
+    <!-- FRONT PAGE -->
+    <div id="frontPage">
+      <div class="card" onclick="openSubject('maths')">Maths</div>
+      <div class="card" onclick="openSubject('reading')">Reading</div>
+      <div class="card" onclick="openSubject('gps')">Grammar, Punctuation & Spelling</div>
+    </div>
+
+    <!-- SUBJECT PAGE -->
+    <div id="subjectPage">
+      <div class="backBtn" onclick="goBackToFront()">← Back</div>
+      <h2 id="subjectTitle"></h2>
+
+      <div class="card" onclick="openWorksheets()">Online Worksheets</div>
+      <div class="card" onclick="startQuiz()">Quizzes</div>
+      <div class="card" onclick="openVideos()">Videos</div>
+    </div>
+
+    <!-- WORKSHEETS PAGE -->
+    <div id="worksheetPage">
+      <div class="backBtn" onclick="goBackToSubject()">← Back</div>
+      <h2>Editable Worksheet</h2>
+      <div id="worksheetContainer"></div>
+    </div>
+
+    <!-- QUIZ PAGE -->
+    <div id="quizPage" style="display:none;">
+      <div class="backBtn" onclick="goBackToSubject()">← Back</div>
+      <h2>Quiz</h2>
+      <div id="quizContainer"></div>
+      <button onclick="submitQuiz()" style="padding:10px 20px;border-radius:8px;margin-top:10px;">Submit</button>
+      <div id="quizResult" style="margin-top:20px;font-size:18px;font-weight:bold;"></div>
+      <div id="quizReview" style="margin-top:20px;"></div>
+    </div>
+
+  </div>
+
+<script>
+  let currentSubject = '';
+
+  function openSubject(subj) {
+    currentSubject = subj;
+    document.getElementById('frontPage').style.display = 'none';
+    document.getElementById('subjectPage').style.display = 'block';
+    document.getElementById('subjectTitle').innerText = subj.toUpperCase();
+  }
+
+  function goBackToFront() {
+    document.getElementById('frontPage').style.display = 'block';
+    document.getElementById('subjectPage').style.display = 'none';
+    document.getElementById('worksheetPage').style.display = 'none';
+    document.getElementById('quizPage').style.display = 'none';
+  }
+
+  function openWorksheets() {
+    document.getElementById('subjectPage').style.display = 'none';
+    document.getElementById('worksheetPage').style.display = 'block';
+
+    let ws = document.getElementById('worksheetContainer');
+    ws.innerHTML = '';
+
+    const worksheets = {
+      maths: [
+        "1. What is 1/2 of 60?",
+        "2. Solve: 7 × 8",
+        "3. Convert 0.6 to a percentage",
+        "4. What is the perimeter of a rectangle 5cm by 3cm?",
+        "5. Complete: 2n + 4 = 16"
+      ],
+      reading: [
+        "1. What is the main idea of the text?",
+        "2. Find a word that means 'angry'.",
+        "3. Why did the character feel upset?",
+        "4. What happens next in the story?",
+        "5. Summarise the paragraph."
+      ],
+      gps: [
+        "1. Circle the verb in the sentence.",
+        "2. Add the correct punctuation.",
+        "3. Choose the correct homophone.",
+        "4. Rewrite in the past tense.",
+        "5. Add a fronted adverbial."
+      ]
+    };
+
+    worksheets[currentSubject].forEach(q => {
+      ws.innerHTML += `
+        <div class='worksheet-question'>
+          <p>${q}</p>
+          <textarea style='width:100%;height:50px;border-radius:8px;padding:8px;'></textarea>
+        </div>
+      `;
+    });
+  }
+
+  function goBackToSubject() {
+    document.getElementById('subjectPage').style.display = 'block';
+    document.getElementById('worksheetPage').style.display = 'none';
+    document.getElementById('quizPage').style.display = 'none';
+  }
+
+  const quizQuestions = {
+    maths: [
+      { q: 'What is 7 × 8?', a: '56' },
+      { q: 'What is 1/2 of 90?', a: '45' }
+    ],
+    reading: [
+      { q: 'What is a synonym for "happy"?', a: 'joyful' }
+    ],
+    gps: [
+      { q: 'Which word is the verb? "The dog ran fast."', a: 'ran' }
+    ]
+  };
+
+  function startQuiz() {
+    document.getElementById('subjectPage').style.display = 'none';
+    document.getElementById('quizPage').style.display = 'block';
+
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = '';
+
+    quizQuestions[currentSubject].forEach((q, i) => {
+      container.innerHTML += `
+        <div class='quiz-question'>
+          <p>${q.q}</p>
+          <input id='quiz${i}' style='width:100%;padding:8px;border-radius:6px;'>
+        </div>
+      `;
+    });
+  }
+
+  function submitQuiz() {
+    const questions = quizQuestions[currentSubject];
+    let score = 0;
+    let reviewHTML = '';
+
+    questions.forEach((q, i) => {
+      const userAns = document.getElementById('quiz' + i).value.trim().toLowerCase();
+      const correct = q.a.toLowerCase();
+
+      if (userAns === correct) score++;
+      else reviewHTML += `<p>❌ Q: ${q.q}<br>Correct answer: <b>${q.a}</b></p>`;
+    });
+
+    document.getElementById('quizResult').innerText = `You scored ${score} / ${questions.length}`;
+    document.getElementById('quizReview').innerHTML = reviewHTML || '<p>All correct! 🎉</p>';
+  }
+
+  function openVideos() {
+    document.getElementById('subjectPage').style.display = 'none';
+
+    let page = document.getElementById('videoPage');
+    if (!page) {
+      const container = document.querySelector('.container');
+      const div = document.createElement('div');
+      div.id = 'videoPage';
+      div.innerHTML = `
+        <div class='backBtn' onclick='goBackToSubject()'>← Back</div>
+        <h2>Videos</h2>
+        <div id='videoList'></div>
+      `;
+      container.appendChild(div);
+      page = div;
+    }
+
+    let list = document.getElementById('videoList');
+    list.innerHTML = '';
+
+    const videos = {
+      maths: [
+        'https://www.youtube.com/embed/ZQp6cQfIh6I',
+        'https://www.youtube.com/embed/QKxj6Ojg7k0'
+      ],
+      reading: [
+        'https://www.youtube.com/embed/0b4aL1K1W6k'
+      ],
+      gps: [
+        'https://www.youtube.com/embed/1j6Xke8j5CI'
+      ]
+    };
+
+    videos[currentSubject].forEach(url => {
+      list.innerHTML += `<iframe width='100%' height='315' src='${url}' style='margin:20px 0;border-radius:12px;'></iframe>`;
+    });
+
+    document.getElementById('videoPage').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
